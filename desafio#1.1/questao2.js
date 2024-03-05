@@ -2,7 +2,7 @@ import { Triangulo } from './triangulo.js';
 import { question } from 'readline-sync';
 
 let triangulos = Array(4);
-let cardinais = ["primeiro", "segundo", "terceiro"];
+const cardinais = ["primeiro", "segundo", "terceiro"];
 for (let i = 0; i < 3; i++) {
     let [vAX, vAY, vBX, vBY, vCX, vCY] = question(`Digite as coordenadas dos 3 vértices do ${cardinais[i]} triângulo separadas por espaço (vAX vAY vBX vBY vCX vCY): `).split(" ");
     triangulos[i] = new Triangulo(vAX, vAY, vBX, vBY, vCX, vCY);
