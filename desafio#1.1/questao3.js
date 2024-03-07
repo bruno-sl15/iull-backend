@@ -1,5 +1,5 @@
-import { Vertice } from "./vertice.js";
-import { Poligono } from "./poligono.js";
+import { Vertice } from "./classes/vertice.js";
+import { Poligono } from "./classes/poligono.js";
 import { question } from "readline-sync";
 
 let coordenadas = question('Digite as coordenadas do vértice separadas por espaço (v1X v1y v2X v2Y ... vnX vnY): ').split(" ");

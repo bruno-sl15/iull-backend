@@ -1,4 +1,4 @@
-import { Triangulo } from './triangulo.js';
+import { Triangulo } from './classes/triangulo.js';
 import { question } from 'readline-sync';
 
 let triangulos = Array(4);

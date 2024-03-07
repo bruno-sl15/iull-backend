@@ -1,4 +1,4 @@
-import { Vertice } from './vertice.js';
+import { Vertice } from './classes/vertice.js';
 import { question } from 'readline-sync';
 import { alphabet } from '../modules/alphabet.js';
 
