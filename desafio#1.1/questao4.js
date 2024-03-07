@@ -56,4 +56,6 @@ while (true) {
         break;
     }
 
+    question("Pressione Enter para voltar ao menu...");
+
 }
