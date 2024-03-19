@@ -43,7 +43,7 @@ export class ValidaPaciente {
 
     // Verifica se o paciente tem 13 anos ou mais
     static idade(dataNascimento) {
-        if (this.#calculaIdade(dataNascimento) < 13) {
+        if (this.calculaIdade(dataNascimento) < 13) {
             return false;
         }
         return true;
@@ -75,9 +75,7 @@ export class ValidaPaciente {
         return true;
     }
 
-    static #calculaIdade(dataNascimento) {
-        let [dia, mes, ano] = dataNascimento.split("/");
-        dataNascimento = new Date(`${mes}/${dia}/${ano}`);
+    static calculaIdade(dataNascimento) {
         let idadeMiliSeg = new Date(Date.now()- dataNascimento);
         return Math.abs(idadeMiliSeg.getUTCFullYear() - 1970);
     }
