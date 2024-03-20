@@ -11,6 +11,7 @@ export class Consultorio {
 
     removePaciente(cpf) {
         this.#pacientes = this.#pacientes.filter(paciente => paciente.cpf !== cpf);
+        this.#consultas = this.#consultas.filter(consulta => consulta.paciente.cpf !== cpf);
     }
 
     addConsulta(cpf, dataHoraInicial, dataHoraFinal) {
@@ -28,6 +29,11 @@ export class Consultorio {
 
     get consultas() {
         return this.#consultas;
+    }
+
+    // Retorna a consulta agendada para o paciente do CPF informado
+    getAgendamentoPorCPF(cpf) {
+        return this.#consultas.find(consulta => consulta.paciente.cpf === cpf && consulta.dataHoraInicial >= new Date(Date.now()));
     }
 }
 

@@ -46,7 +46,7 @@ export class ValidaConsulta {
         let m = parseInt(hora.slice(2,4))
 
         // Se a hora não estiver entre 8h e 19h ou os minutos não forem 0, 15, 30 ou 45, retorna false
-        if (h<8 || h>=19 || ![0,15,30,45].includes(m)){
+        if (h<8 || h>=19){ //|| ![0,15,30,45].includes(m)){
             return false;
         }
         
@@ -79,13 +79,24 @@ export class ValidaConsulta {
         return false;
     }
 
-    // Verifica se já existe uma consulta futura para o paciente do cpf informado
+    // Verifica se já existe uma consulta futura ou uma consulta atualmente em curso para o paciente do cpf informado
     static existeAgendamento(cpf, consultas){
-        return consultas.some(consulta => consulta.paciente.cpf === cpf && consulta.dataHoraInicial > new Date(Date.now()));
+        return consultas.some(consulta => consulta.paciente.cpf === cpf && (consulta.dataHoraInicial > new Date(Date.now())) || this.#agendamentoEmCurso(cpf, consultas));
     }
 
     // Verifica se já existe uma consulta com o mesmo cpf e dataHoraInicial
     static existeConsulta(cpf, dataHoraInicial, consultas){
         return consultas.some(consulta => consulta.paciente.cpf === cpf && consulta.dataHoraInicial.getTime() === dataHoraInicial.getTime());
+    }
+
+    /*
+    static isAgendamentoFuturo(cpf, dataHoraInicial, consultas){
+        return dataHoraInicial > new Date(Date.now()) || this.#agendamentoEmCurso(cpf, consultas);
+    }
+    */
+
+    // Verifica se já existe uma consulta em curso para o paciente do cpf informado
+    static #agendamentoEmCurso(cpf, consultas){
+        return consultas.some(consulta => consulta.paciente.cpf === cpf && consulta.dataHoraInicial <= new Date(Date.now()) && consulta.dataHoraFinal >= new Date(Date.now()));
     }
 }

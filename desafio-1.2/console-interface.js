@@ -131,7 +131,7 @@ class ConsoleInterface {
     // orderBy = nome para ordenar pacientes por nome
     // orderBy = cpf para ordenar pacientes por cpf
     #listaPacientes(orderBy){
-        let maxNome = this.#consultorio.pacientes.reduce((max, paciente) => Math.max(max, paciente.nome.length), 0);
+        let maxNome = Math.max(this.#consultorio.pacientes.reduce((max, paciente) => Math.max(max, paciente.nome.length), 0), 25);
         const cabecalho = `${"CPF".padEnd(11)} ${"Nome".padEnd(maxNome)}  Dt.Nasc.  Idade`;
         const separador = '-'.repeat(cabecalho.length);
         console.log()
@@ -144,10 +144,19 @@ class ConsoleInterface {
         else if (orderBy.toLowerCase() === 'nome'){
             var pacientes = [...this.#consultorio.pacientes].sort((a, b) => a.nome.localeCompare(b.nome));
         }
+
         pacientes.forEach(paciente => {
             console.log(`${paciente.cpf} ${paciente.nome.padEnd(maxNome)} ${this.#getDiaMesAno(paciente.dataNascimento)}   ${ValidaPaciente.calculaIdade(paciente.dataNascimento).toString().padStart(3)}`);
+
+            // Se o paciente estiver agendado, imprime a data e hora da consulta
+            let consulta = this.#consultorio.getAgendamentoPorCPF(paciente.cpf);
+            if (consulta !== undefined){
+                console.log(`${" ".repeat(11)} Agendado para: ${this.#getDiaMesAno(consulta.dataHoraInicial)}`);
+                console.log(`${" ".repeat(11)} ${this.#getHoraMinuto(consulta.dataHoraInicial)} às ${this.#getHoraMinuto(consulta.dataHoraFinal)}`);
+            }
+
+            console.log(separador)
         });
-        console.log(separador)
     }
 
     #agendarConsulta(){
@@ -209,8 +218,14 @@ class ConsoleInterface {
         }
 
         let dataHoraInicial = new Date(`${mes}/${dia}/${ano} ${horaInicial.slice(0,2)}:${horaInicial.slice(2,4)}`);
+
         if (!ValidaConsulta.existeConsulta(cpf, dataHoraInicial, this.#consultorio.consultas)){
             console.log('\nErro: Agendamento não encontrado');
+            return;
+        }
+
+        if (!ValidaConsulta.existeAgendamento(cpf, this.#consultorio.consultas)){
+            console.log('\nErro: Consultas já realizadas não podem ser canceladas');
             return;
         }
 
@@ -219,16 +234,42 @@ class ConsoleInterface {
     }
 
     #listaAgenda(){
-        let maxNome = this.#consultorio.pacientes.reduce((max, paciente) => Math.max(max, paciente.nome.length), 0);
+        let opcao = question('\nApresentar a agenda T-Toda ou P-Periodo: ');
+
+        // Lista de consultas ordenada por data e hora
+        let consultasOrdenadas = [...this.#consultorio.consultas].sort((a, b) => a.dataHoraInicial - b.dataHoraInicial); 
+
+        // Se o usuário optar por apresentar a agenta por período
+        if (opcao.toLowerCase() === 'p' || opcao.toLowerCase() === 'periodo') {
+            let dataInicial = question('Data inicial: ');
+            if (!ValidaConsulta.data(dataInicial)){
+                console.log('\nErro: Data inválida');
+                return;
+            }
+            let [dia, mes, ano] = dataInicial.split("/");
+            dataInicial = new Date(`${mes}/${dia}/${ano} 00:00:00`);
+
+            let dataFinal = question('Data final: ');
+            if (!ValidaConsulta.data(dataFinal)){
+                console.log('\nErro: Data inválida');
+                return;
+            }
+            [dia, mes, ano] = dataFinal.split("/");
+            dataFinal = new Date(`${mes}/${dia}/${ano} 23:59:59`);
+
+            // Filtra as consultas para mostrar apenas as que estão no período informado
+            consultasOrdenadas = consultasOrdenadas.filter(consulta => consulta.dataHoraInicial >= new Date(dataInicial) && consulta.dataHoraInicial <= new Date(dataFinal));
+        }
+
+        let maxNome = consultasOrdenadas.reduce((max, consulta) => Math.max(max, consulta.paciente.nome.length), 0);
         const cabecalho = `   Data    H.Ini H.fim Tempo ${"Nome".padEnd(maxNome)}  Dt.Nasc. `;
         const separador = '-'.repeat(cabecalho.length);
         console.log()
         console.log(separador);
         console.log(cabecalho);
         console.log(separador);
-
-        // lista de consultas ordenada pela dataHoraInicial
-        let consultasOrdenadas = [...this.#consultorio.consultas].sort((a, b) => a.dataHoraInicial - b.dataHoraInicial);        
+       
+        // Imprime a lista de consultas ordenada por data e hora
         consultasOrdenadas.forEach(consulta => {
             console.log(`${this.#getDiaMesAno(consulta.dataHoraInicial)} ${this.#getHoraMinuto(consulta.dataHoraInicial)} ${this.#getHoraMinuto(consulta.dataHoraFinal)} ${this.#diferencaHoras(consulta.dataHoraInicial, consulta.dataHoraFinal)} ${consulta.paciente.nome.padEnd(maxNome)} ${this.#getDiaMesAno(consulta.paciente.dataNascimento)}`);
         });
