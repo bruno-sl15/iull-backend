@@ -17,8 +17,8 @@ Repositório com os desafios da Turma 5 (Pró-Reforma) de Back-End do Programa d
 
 ## Instruções para o Desafio #1.2
 
-Executar o arquivo `/desafio-1.2/console-interface.js` através do comando: 
-`node desafio-1.2/console-interface.js`
-ou
-`cd desafio-1.2`
+Executar o arquivo `/desafio-1.2/console-interface.js` através do comando:\
+`node desafio-1.2/console-interface.js`\
+ou\
+`cd desafio-1.2`\
 `node console-interface.js`
