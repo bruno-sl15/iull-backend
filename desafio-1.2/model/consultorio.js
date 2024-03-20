@@ -32,17 +32,9 @@ export class Consultorio {
 }
 
 export class ValidaConsultorio {
+
+    // Verifica se existe um paciente com o cpf fornecido
     static existeCPF(cpf, pacientes) {
         return pacientes.some(paciente => paciente.cpf === cpf);
-    }
-
-    static existeAgenda(cpf, consultas){
-        let consultasPaciente = consultas.filter(consultas => consultas.paciente.cpf === cpf);
-        for (let consulta in consultasPaciente){
-            if (consulta.dataHoraInicial > new Date(Date.now())){
-                return true;
-            }
-        }
-        return false;
     }
 }

@@ -1,7 +1,7 @@
 export class Paciente {
     #cpf;
     #nome;
-    #dataNascimento;  // Date
+    #dataNascimento;
 
     constructor(cpf, nome, dataNascimento) {
         this.#cpf = cpf;
@@ -16,7 +16,7 @@ export class Paciente {
     get nome() {
         return this.#nome;
     }
-
+ 
     get dataNascimento() {
         return this.#dataNascimento;
     }
